@@ -20,7 +20,7 @@ setInterval(() => {
   }
 
   stories.update();
-}, 500);
+}, 250);
 
 function Location() {
   const STORIES_LOCATION = 'https://medium.com/me/stories/public';
