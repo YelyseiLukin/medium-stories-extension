@@ -1,63 +1,56 @@
-'use strict';
-
-const MODES = {
-  ALL: 'all',
-  STORIES: 'stories',
-  COMMENTS: 'comments',
-};
-
-const items = [
-  {
-    value: MODES.COMMENTS,
-    title: 'Comments',
-  },
-  {
-    value: MODES.STORIES,
-    title: 'Stories',
-  },
-  {
-    value: MODES.ALL,
-    title: 'All',
-  },
-];
-
-const menuElements = [];
-let storyElements = [];
-
 const mode = Mode();
+const locator = Location();
+const menu = Menu();
+const stories = Stories();
 
-createMenu();
-setActiveMenuItem();
-setStoriesInitialStyle();
-setStoriesVisibility();
-
-function createMenu() {
-  const menu = document.querySelector('.ex.bw.be.ey.ez');
-
-  items.forEach(({value, title}) => {
-    let element = document.createElement('li');
-
-    element.classList.add('ms_menu-item');
-    element.innerText = title;
-    element.onclick = () => mode.set(value);
-
-    menu.appendChild(element);
-
-    menuElements.push(element);
+setInterval(() => {
+  locator.update({
+    onEnter: () => {},
+    onLeave: () => {
+      menu.clear();
+      stories.clear();
+    },
   });
-}
 
-function setActiveMenuItem() {
-  items.forEach(({value, title}, index) => {
-    if (value === mode.get()) {
-      menuElements[index].classList.add('ms_menu-item--active');
-    } else {
-      menuElements[index].classList.remove('ms_menu-item--active');
-    }
-  });
+  if (!locator.isStoriesPage()) return;
+
+  if (menu.isEmpty()) {
+    menu.create();
+    menu.setActiveItem();
+  }
+
+  stories.update();
+}, 500);
+
+function Location() {
+  const STORIES_LOCATION = 'https://medium.com/me/stories/public';
+
+  let previous = '';
+  let current = '';
+
+  const update = ({onEnter, onLeave}) => {
+    previous = current;
+    current = window.location.href;
+
+    if (previous !== STORIES_LOCATION && current === STORIES_LOCATION) onEnter();
+    if (previous === STORIES_LOCATION && current !== STORIES_LOCATION) onLeave();
+  };
+
+  const isStoriesPage = () => current === STORIES_LOCATION;
+
+  return {
+    update,
+    isStoriesPage,
+  };
 }
 
 function Mode() {
+  const MODES = {
+    ALL: 'all',
+    STORIES: 'stories',
+    COMMENTS: 'comments',
+  };
+
   let mode = MODES.ALL;
 
   chrome.storage.sync.get(['mode'], (result) => {
@@ -71,9 +64,8 @@ function Mode() {
   const set = (newMode) => {
     if (mode !== newMode) {
       mode = newMode;
-      setActiveMenuItem();
-      setStoriesInitialStyle(); // TODO remove
-      setStoriesVisibility();
+      menu.setActiveItem();
+      stories.setVisibility();
       chrome.storage.sync.set({mode: newMode});
     }
   };
@@ -81,48 +73,144 @@ function Mode() {
   return {
     get,
     set,
+    MODES,
   };
 }
 
-function setStoriesInitialStyle() {
-  const stories = document.querySelector('.da.db.dc.ai.dd.r.de.df.dg.dh.di.dj.dk.dl.dm.dn.do.dp.dq').children[2].querySelectorAll('.dr.fg.ew.r');
+function Menu() {
+  const items = [
+    {
+      value: mode.MODES.COMMENTS,
+      title: 'Comments',
+      count: (storiesCount, commentsCount) => commentsCount,
+    },
+    {
+      value: mode.MODES.STORIES,
+      title: 'Stories',
+      count: (storiesCount, commentsCount) => storiesCount,
+    },
+    {
+      value: mode.MODES.ALL,
+      title: 'All',
+      count: (storiesCount, commentsCount) => storiesCount + commentsCount,
+    },
+  ];
 
-  storyElements = [...stories];
+  let elements = [];
+  let storiesCount = 0;
+  let commentsCount = 0;
 
-  storyElements.forEach((story) => {
-    story.classList.add('story');
-  });
+  const create = () => {
+    const menu = document.querySelector('.ex.bw.be.ey.ez');
+
+    items.forEach(({value, title, count}) => {
+      let element = document.createElement('li');
+
+      element.classList.add('ms_menu-item');
+      element.innerText = `${title} ${count(storiesCount, commentsCount)}`;
+      element.onclick = () => mode.set(value);
+
+      menu.appendChild(element);
+
+      elements.push(element);
+    });
+  };
+
+  const setActiveItem = () => {
+    items.forEach(({value, title}, index) => {
+      if (value === mode.get()) {
+        elements[index].classList.add('ms_menu-item--active');
+      } else {
+        elements[index].classList.remove('ms_menu-item--active');
+      }
+    });
+  };
+
+  const updateTexts = (sCount, cCount) => {
+    storiesCount = sCount;
+    commentsCount = cCount;
+
+    elements.forEach((menuElement, index) => {
+      menuElement.innerText = `${items[index].title} ${items[index].count(storiesCount, commentsCount)}`;
+    });
+  };
+
+  const clear = () => {
+    elements = [];
+    storiesCount = 0;
+    commentsCount = 0;
+  };
+
+  const isEmpty = () => elements.length === 0;
+
+  return {
+    create,
+    clear,
+    setActiveItem,
+    updateTexts,
+    isEmpty,
+  }
 }
 
-function setStoriesVisibility() {
-  storyElements.forEach((story) => {
-    let visible;
+function Stories() {
+  let elements = [];
 
-    if (mode.get() === MODES.ALL) {
-      visible = true;
-    } else {
-      let isStory = false;
+  const update = () => {
+    const stories = document.querySelector('.da.db.dc.ai.dd.r.de.df.dg.dh.di.dj.dk.dl.dm.dn.do.dp.dq').children[2].querySelectorAll('.dr.ew.r');
 
-      const texts = story.children[1].querySelector('.aq.b.ar.as.at.au.r.av.aw');
-      console.log('texts', texts.length, texts);
-      // const star = story.children[1].querySelector('.aq.b.ar.as.at.au.r.av.aw');
-      // if (star) isStory = true;
-      //
-      // console.log('star', star);
-      // if (!isStory) {
-      //   const publication = story.children[1].querySelector('.fr.n.dt').querySelectorAll('.aq.b.ar.as.at.au.r.av.aw');
-      //   console.log('texts', publication.length, publication);
-      //   if (publication.length === 5) isStory = true;
-      // }
+    if (stories.length !== elements.length) {
+      elements = [...stories];
 
-      if (mode.get() === MODES.STORIES) visible = isStory;
-      if (mode.get() === MODES.COMMENTS) visible = !isStory;
+      setInitialStyle();
+      setVisibility();
     }
+  };
 
-    if (visible) {
-      story.classList.remove('story--hidden');
-    } else {
-      story.classList.add('story--hidden');
-    }
-  });
+  const clear = () => {
+    elements = [];
+  };
+
+  const setInitialStyle = () => {
+    elements.forEach((story) => {
+      story.classList.add('story');
+    });
+  };
+
+  const setVisibility = () => {
+    let storiesCount = 0;
+    let commentsCount = 0;
+
+    elements.forEach((story) => {
+      let visible;
+
+      const texts = story.children[1].querySelectorAll('.aq.b.ar.as.at.au.r.av.aw');
+
+      let isStory = texts.length > 4;
+
+      if (isStory) {
+        storiesCount++;
+      } else {
+        commentsCount++;
+      }
+
+      if (mode.get() === mode.MODES.ALL) visible = true;
+      if (mode.get() === mode.MODES.STORIES) visible = isStory;
+      if (mode.get() === mode.MODES.COMMENTS) visible = !isStory;
+
+      if (visible) {
+        story.classList.remove('story--hidden');
+      } else {
+        story.classList.add('story--hidden');
+      }
+    });
+
+    menu.updateTexts(storiesCount, commentsCount);
+  };
+
+  return {
+    clear,
+    update,
+    setInitialStyle,
+    setVisibility,
+  }
 }

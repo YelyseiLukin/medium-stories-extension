@@ -11,11 +11,11 @@
 }
 
 .ms_menu-item:hover {
-    color: rgba(0, 0, 0, 1);
+    color: rgba(0, 0, 0, 0.84);
 }
 
 .ms_menu-item--active {
-    color: rgba(0, 0, 0, 1);
+    color: rgba(0, 0, 0, 0.84);
     border-bottom: 1px solid rgba(0, 0, 0, 0.54);
 }
 
