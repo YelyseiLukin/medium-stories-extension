@@ -4,13 +4,8 @@
   "description": "Helps Medium writers to separate their stories from comments",
   "permissions": [
     "storage",
-    "declarativeContent",
-    "activeTab"
+    "declarativeContent"
   ],
-  "background": {
-    "scripts": ["./src/background.js"],
-    "persistent": false
-  },
   "content_scripts": [
     {
       "matches": ["https://medium.com/*"],
