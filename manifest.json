@@ -1,0 +1,37 @@
+{
+  "name": "Medium Stories",
+  "version": "1.0",
+  "description": "Helps Medium writers to separate their stories from comments",
+  "permissions": [
+    "storage",
+    "declarativeContent",
+    "activeTab"
+  ],
+  "background": {
+    "scripts": ["./src/background.js"],
+    "persistent": false
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://medium.com/me/stories/public"],
+      "run_at": "document_end",
+      "css": ["./assets/css/stories.css"],
+      "js": ["./src/stories.js"]
+    }
+  ],
+  "page_action": {
+    "default_icon": {
+      "16": "./assets/images/get_started16.png",
+      "32": "./assets/images/get_started32.png",
+      "48": "./assets/images/get_started48.png",
+      "128": "./assets/images/get_started128.png"
+    }
+  },
+  "icons": {
+    "16": "./assets/images/get_started16.png",
+    "32": "./assets/images/get_started32.png",
+    "48": "./assets/images/get_started48.png",
+    "128": "./assets/images/get_started128.png"
+  },
+  "manifest_version": 2
+}

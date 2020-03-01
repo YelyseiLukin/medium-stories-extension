@@ -1,0 +1,33 @@
+.ms_menu-item {
+    float: right;
+    display: inline-block;
+    outline: none;
+    padding-bottom: 8px;
+    margin-right: 20px;
+    line-height: 20px;
+    cursor: pointer;
+    color: rgba(0, 0, 0, 0.54);
+    border-bottom: 1px solid transparent;
+}
+
+.ms_menu-item:hover {
+    color: rgba(0, 0, 0, 1);
+}
+
+.ms_menu-item--active {
+    color: rgba(0, 0, 0, 1);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.54);
+}
+
+.story {
+    overflow-y: hidden;
+    max-height: 125px;
+    transition-property: max-height, padding-bottom, padding-top, border-bottom-color;
+    transition-duration: 0.4s;
+}
+
+.story--hidden {
+    max-height: 0;
+    padding: 0 !important;
+    border-bottom: 1px solid transparent !important;
+}
