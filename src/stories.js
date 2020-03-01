@@ -103,9 +103,10 @@ function Menu() {
   const create = () => {
     const menu = document.querySelector('.ex.bw.be.ey.ez');
 
-    items.forEach(({value, title, count}) => {
+    items.forEach(({value, title, count}, index) => {
       let element = document.createElement('li');
 
+      if (index === 0) element.style.marginRight = '0';
       element.classList.add('ms_menu-item');
       element.innerText = `${title} ${count(storiesCount, commentsCount)}`;
       element.onclick = () => mode.set(value);
