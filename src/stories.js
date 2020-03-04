@@ -97,10 +97,12 @@ function Menu() {
   ];
 
   let elements = [];
+  let created = false;
   let storiesCount = 0;
   let commentsCount = 0;
 
   const create = () => {
+    created = true;
     const menu = document.querySelector('.ex.bw.be.ey.ez');
 
     items.forEach(({value, title, count}, index) => {
@@ -138,11 +140,12 @@ function Menu() {
 
   const clear = () => {
     elements = [];
+    created = false;
     storiesCount = 0;
     commentsCount = 0;
   };
 
-  const isEmpty = () => elements.length === 0;
+  const isEmpty = () => !created;
 
   return {
     create,
