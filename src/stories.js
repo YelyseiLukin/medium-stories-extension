@@ -103,7 +103,7 @@ function Menu() {
 
   const create = () => {
     created = true;
-    const menu = document.querySelector('.ex.bw.be.ey.ez');
+    const menu = document.querySelector('section').children[1].children[0].children[0];
 
     items.forEach(({value, title, count}, index) => {
       let element = document.createElement('li');
@@ -160,7 +160,7 @@ function Stories() {
   let elements = [];
 
   const update = () => {
-    const stories = document.querySelector('.da.db.dc.ai.dd.r.de.df.dg.dh.di.dj.dk.dl.dm.dn.do.dp.dq').children[2].querySelectorAll('.dr.ew.r');
+    const stories = [...document.querySelector('section').children[2].children].filter((item) => item.classList.length);
 
     if (stories.length !== elements.length) {
       elements = [...stories];
@@ -187,9 +187,9 @@ function Stories() {
     elements.forEach((story) => {
       let visible;
 
-      const texts = story.children[1].querySelectorAll('.aq.b.ar.as.at.au.r.av.aw');
+      const texts = story.children[1].querySelectorAll('div');
 
-      let isStory = texts.length > 4;
+      let isStory = texts.length > 9;
 
       if (isStory) {
         storiesCount++;

@@ -1,6 +1,6 @@
 {
   "name": "Medium Stories",
-  "version": "1.1",
+  "version": "1.2",
   "description": "Helps Medium writers to separate their stories from comments",
   "permissions": [
     "storage",
