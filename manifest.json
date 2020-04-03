@@ -3,8 +3,7 @@
   "version": "1.2",
   "description": "Helps Medium writers to separate their stories from comments",
   "permissions": [
-    "storage",
-    "declarativeContent"
+    "storage"
   ],
   "content_scripts": [
     {
