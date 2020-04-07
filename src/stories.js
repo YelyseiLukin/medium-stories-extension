@@ -139,6 +139,14 @@ function Menu() {
   };
 
   const clear = () => {
+    const menu = document.querySelector('section').children[1].children[0].children[0];
+
+    if (menu) {
+      elements.forEach((element) => {
+        menu.removeChild(element);
+      });
+    }
+
     elements = [];
     created = false;
     storiesCount = 0;
